@@ -1,4 +1,5 @@
 Layer 1,Layer 2,Learning rate,Batch size,Activation,Accuracy
+
 550,850,0.01,16,relu,0.9851
 550,850,0.01,32,relu,0.9845247603833865
 550,850,0.01,64,relu,0.9837778662420382

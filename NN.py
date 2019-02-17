@@ -128,7 +128,7 @@ class MLP(object):
         for i,v in enumerate(labels):
             loss -= np.log(out[v][i])
 
-        return loss/self.batch_size
+        return loss/len(labels)
 
 
     def softmax(self,input):
@@ -208,6 +208,90 @@ class MLP(object):
             self.weights['w'+str(k)] -= self.lr * self.grads['dw'+str(k)]
             self.biais['b'+str(k)] = self.biais['b'+str(k)] - self.lr * np.sum(self.grads['dpre_ac'+str(k)],axis=1,keepdims=True)
 
+    
+    def approx_grad(self,layer):
+        """
+        Class method that approximate the gradient of the loss function
+        with the finite difference method performed on one sample
+        :param layer: the layer in which we want to approxiamte some weight gradients
+        """
+        
+        N=[]
+        max_diff=[]
+        
+        #We use the first exemple of the training for the approximation
+        #and perform forward and backward to compute the true gradients
+        
+        x = self.tr[0][0]
+        x=np.reshape(x,(784,1))
+        label = [self.tr[1][0]]
+        self.forward(x)
+        self.backward(label)
+        
+        
+        # We compute the finite differences with several values of N
+        
+        for i in range(6):
+            for k in range(1,6):
+                
+                # each value of N is added to the final list
+                
+                N.append(k*(10**i))
+                
+                # epsilon is a matrix of the same shape as the weight matrix
+                # of which we approximate the gradients
+                # We initilize it as a zeros matrix
+                
+                epsilon = np.zeros(self.weights['w'+str(layer)].shape)
+                
+                finite_diff=[]
+                grads=[]
+                
+                # we perform the approximation for the 10 first values of 
+                # the weight matrix
+                
+                for j in range(10):
+                    
+                    # at the position of the gradient we want to approxiamte
+                    # epsilon take a very small value calulated with N
+                    
+                    epsilon[0][j] = 1./(N[-1])
+                    
+                    # we add/subtract epsilon to the weight matrix
+                    # and then perform forward propagation
+                    # to finally compute the finite difference
+                    
+                    self.weights['w'+str(layer)]+=epsilon
+                    self.forward(x)
+                    out = self.computed_vals['ac'+str(self.L-1)]
+                    loss1 = self.loss(out,label)
+                    self.weights['w'+str(layer)]-=(2*epsilon)
+                    self.forward(x)
+                    out = self.computed_vals['ac'+str(self.L-1)]
+                    loss2 = self.loss(out,label)
+                    
+                    finite_diff.append((loss1-loss2)/(2./N[-1]))
+                    
+                    # we get also the corresponding true gradients
+                    grads.append(self.grads['dw'+str(layer)][0][j])
+                    
+                    # we set the weight matrix back to its initial values
+                    self.weights['w'+str(layer)]+=epsilon
+
+                finite_diff = np.array(finite_diff)
+                grads = np.array(grads)
+                
+                # we only keep the maximum diffrence btw the true gradient
+                # and the finite difference for the 10 first weight elements 
+                max_diff.append(max(np.absolute(finite_diff-grads)))
+        
+        print(N)
+        print(max_diff)
+        
+        # plot the finite differences function of log(N)
+        plt.plot(np.log(N),max_diff,'bo')
+        plt.show
+        return
     
     def train(self):
         
