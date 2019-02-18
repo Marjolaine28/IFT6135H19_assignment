@@ -12,8 +12,8 @@ To download the MNIST dataset with standard train/valid/test splits, do `python 
 
 ## Modules
 
-numpy
-matplotlib.pyplot
+numpy, 
+matplotlib.pyplot, 
 csv
 
 ## NN script
