@@ -1,4 +1,21 @@
-# IFT6135H19_assignment
+# IFT6135H19_assignment : problem 1
 
-## MNIST
-to download the MNIST dataset with standard train/valid/test splits, do `python download.py --dataset=mnist --savedir={where-you-want-to-save-the-dataset}`
+
+## Python version
+
+The code is written in python 2.7
+
+## Data
+
+To download the MNIST dataset with standard train/valid/test splits, do `python download.py --dataset=mnist --savedir={where-you-want-to-save-the-dataset}`. You will then initialize your MLP model with this path.
+
+
+## Modules
+
+numpy
+matplotlib.pyplot
+csv
+
+## NN script
+
+Provides an MLP class. 
