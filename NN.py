@@ -448,7 +448,7 @@ class MLP(object):
             self.tracking_train_loss.append(train_loss/train_i)
             self.tracking_valid_loss.append(valid_loss/valid_i)
             
-            # if the loss of the validation is bigger than the loss of the train,
+            # if the loss of the validation is increasing,
             # then we set a smaller learning rate to avoid overfitting
             
             if current_epoch >= 2 :
